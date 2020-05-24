@@ -1,0 +1,11 @@
+{
+    "python.pythonPath": "i:\\gwatts\\Code\\irishep\\make-it-sync\\.venv\\Scripts\\python.exe",
+    "cSpell.words": [
+        "NOQA",
+        "asyncio",
+        "codecov",
+        "pytest",
+        "setuptools",
+        "unittests"
+    ]
+}
