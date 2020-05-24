@@ -1,12 +1,12 @@
-from typing import Callable, TypeVar
-from concurrent.futures import ThreadPoolExecutor
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
+from functools import wraps
+from typing import Callable, TypeVar, Awaitable
 
-T = TypeVar('T')
 R = TypeVar('R')
 
 
-def make_sync(fn: Callable[..., R]) -> Callable[..., R]:
+def make_sync(fn: Callable[..., Awaitable[R]]) -> Callable[..., R]:
     '''
     Wraps an async function to make it synchronous. The function will will try to run it
     on the current thread if it can fine an event loop that isn't running, otherwise it will
@@ -25,11 +25,12 @@ def make_sync(fn: Callable[..., R]) -> Callable[..., R]:
       threads.
     '''
     # Define the function we will return that will do the work
+    @wraps(fn)
     def sync_version_of_function(*args, **kwargs):
         loop = asyncio.get_event_loop()
         if not loop.is_running():
             # Call the function directly
-            r = fn(*args, *kwargs)
+            r = fn(*args, **kwargs)
             return loop.run_until_complete(r)
         else:
             def get_data_wrapper(*args, **kwargs):
