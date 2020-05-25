@@ -34,6 +34,7 @@ setup(name="make-it-sync",
               'codecov',
               'autopep8',
               'twine',
+              'wheel'
           ],
       },
       classifiers=[
