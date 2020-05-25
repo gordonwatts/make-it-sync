@@ -1,7 +1,10 @@
-from make_it_sync import make_sync
-from asyncio import sleep, get_event_loop
-import pytest
+from asyncio import get_event_loop, sleep
 import inspect
+from typing import Tuple
+
+import pytest
+
+from make_it_sync import make_sync
 
 
 async def simple_func(a: int) -> int:
@@ -98,3 +101,28 @@ class tester:
 def test_wrap_class_method():
     o = tester(10)
     assert o.my(1) == 11
+
+
+async def func_with_kwargs(bins: int = 10, range: Tuple[int, int] = (4, 10)) -> int:
+    await sleep(0.01)
+    return bins + range[0]
+
+
+def test_wrap_kwargs_defaults():
+    wrap_it = make_sync(func_with_kwargs)
+    assert wrap_it() == 14
+
+
+def test_wrap_kwargs_specified():
+    wrap_it = make_sync(func_with_kwargs)
+    assert wrap_it(bins=5, range=(5, 10)) == 10
+
+
+def test_wrap_kwargs_specified_loop():
+    t_wrap = make_sync(func_with_kwargs)
+
+    async def doit():
+        assert t_wrap(bins=5, range=(5, 10)) == 10
+
+    loop = get_event_loop()
+    loop.run_until_complete(doit())

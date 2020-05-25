@@ -41,7 +41,7 @@ def make_sync(fn: Callable[..., Awaitable[R]]) -> Callable[..., R]:
                 return loop.run_until_complete(fn(*args, **kwargs))
 
             exector = ThreadPoolExecutor(max_workers=1)
-            future = exector.submit(get_data_wrapper, *args, *kwargs)
+            future = exector.submit(get_data_wrapper, *args, **kwargs)
 
             return future.result()
 
