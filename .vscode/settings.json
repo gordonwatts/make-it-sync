@@ -4,6 +4,7 @@
         "NOQA",
         "asyncio",
         "codecov",
+        "isabstractmethod",
         "pytest",
         "setuptools",
         "unittests"

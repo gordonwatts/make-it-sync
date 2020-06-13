@@ -1,6 +1,7 @@
 from asyncio import get_event_loop, sleep
 import inspect
 from typing import Tuple
+from abc import ABC, abstractmethod
 
 import pytest
 
@@ -126,3 +127,76 @@ def test_wrap_kwargs_specified_loop():
 
     loop = get_event_loop()
     loop.run_until_complete(doit())
+
+
+def test_abstract_method_created():
+    class abc_base(ABC):
+        @abstractmethod
+        async def doit_async(self):
+            raise NotImplementedError()
+
+        doit = make_sync(doit_async)
+
+    class abs_derived(abc_base):
+        async def doit_async(self):
+            return 42
+
+    abs_derived()
+
+
+def test_abstract_method_invoked():
+    class abc_base(ABC):
+        @abstractmethod
+        async def doit_async(self):
+            raise NotImplementedError()
+
+        doit = make_sync(doit_async)
+
+    class abs_derived(abc_base):
+        async def doit_async(self):
+            return 42
+
+    a = abs_derived()
+    assert a.doit() == 42
+
+
+def test_abstract_two_methods_invoked():
+    'Checking to make sure lambda capture is working as expected'
+    class abc_base_2(ABC):
+        @abstractmethod
+        async def doit_async_1(self):
+            raise NotImplementedError()
+
+        @abstractmethod
+        async def doit_async_2(self):
+            raise NotImplementedError()
+
+        doit_1 = make_sync(doit_async_1)
+        doit_2 = make_sync(doit_async_2)
+
+    class abs_derived_2(abc_base_2):
+        async def doit_async_1(self):
+            return 42
+
+        async def doit_async_2(self):
+            return 43
+
+    a = abs_derived_2()
+    assert a.doit_1() == 42
+    assert a.doit_2() == 43
+
+
+def test_abstract_method_arguments():
+    class abc_base(ABC):
+        @abstractmethod
+        async def doit_async(self, a1: int, a2: int = 20, a3: int = 30):
+            raise NotImplementedError()
+
+        doit = make_sync(doit_async)
+
+    class abs_derived(abc_base):
+        async def doit_async(self, a1: int, a2: int = 20, a3: int = 30):
+            return a1 + a2 + a3
+
+    a = abs_derived()
+    assert a.doit(1, a3=40) == (1 + 20 + 40)

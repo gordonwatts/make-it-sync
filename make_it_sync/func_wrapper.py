@@ -6,6 +6,26 @@ from typing import Callable, TypeVar, Awaitable
 R = TypeVar('R')
 
 
+def _sync_version_of_function(fn: Callable[..., Awaitable[R]], *args, **kwargs) -> R:
+    loop = asyncio.get_event_loop()
+    if not loop.is_running():
+        # Call the function directly
+        r = fn(*args, **kwargs)
+        return loop.run_until_complete(r)
+    else:
+        def get_data_wrapper(*args, **kwargs):
+            # New thread - get the loop.
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            assert not loop.is_running()
+            return loop.run_until_complete(fn(*args, **kwargs))
+
+        exector = ThreadPoolExecutor(max_workers=1)
+        future = exector.submit(get_data_wrapper, *args, **kwargs)
+
+        return future.result()
+
+
 def make_sync(fn: Callable[..., Awaitable[R]]) -> Callable[..., R]:
     '''
     Wraps an async function to make it synchronous. The function will will try to run it
@@ -25,24 +45,26 @@ def make_sync(fn: Callable[..., Awaitable[R]]) -> Callable[..., R]:
       threads.
     '''
     # Define the function we will return that will do the work
-    @wraps(fn)
-    def sync_version_of_function(*args, **kwargs):
-        loop = asyncio.get_event_loop()
-        if not loop.is_running():
-            # Call the function directly
-            r = fn(*args, **kwargs)
-            return loop.run_until_complete(r)
-        else:
-            def get_data_wrapper(*args, **kwargs):
-                # New thread - get the loop.
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                assert not loop.is_running()
-                return loop.run_until_complete(fn(*args, **kwargs))
+    if _check_is_abstract(fn):
+        func_name = fn.__name__
 
-            exector = ThreadPoolExecutor(max_workers=1)
-            future = exector.submit(get_data_wrapper, *args, **kwargs)
+        @wraps(fn)
+        def wrapped_call(*args, **kwargs):
+            v = getattr(args[0], func_name, None)
+            if v is None:
+                raise NotImplementedError(
+                    f'Function {func_name} is not implemented by {args[0].__name__}')
+            return _sync_version_of_function(v, *(args[1:]), **kwargs)
+        del wrapped_call.__isabstractmethod__
+        return wrapped_call
+    else:
+        @wraps(fn)
+        def wrapped_call(*args, **kwargs):
+            return _sync_version_of_function(fn, *args, **kwargs)
 
-            return future.result()
+        return wrapped_call
 
-    return sync_version_of_function
+
+def _check_is_abstract(f: Callable):
+    'Check to see if the function is callable'
+    return hasattr(f, '__isabstractmethod__') and f.__isabstractmethod__
