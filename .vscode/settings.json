@@ -2,6 +2,7 @@
     "python.pythonPath": "i:\\gwatts\\Code\\irishep\\make-it-sync\\.venv\\Scripts\\python.exe",
     "cSpell.words": [
         "NOQA",
+        "abstractmethod",
         "asyncio",
         "codecov",
         "isabstractmethod",
