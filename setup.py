@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name="make-it-sync",
-      version='1.0.0-alpha.2',
+      version='1.0.0',
       packages=['make_it_sync'],
       scripts=[],
       description="Create a sync version of an async function",
