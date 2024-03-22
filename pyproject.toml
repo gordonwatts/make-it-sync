@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "make-it-sync"
+version = "1.0.0"
+description = "Create a sync version of an async function"
+readme = "README.md"
+requires-python = ">=3.7"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Gordon Watts", email = "gwatts@uw.edu" },
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Topic :: Software Development",
+  "Topic :: Utilities",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+]
+dependencies = []
+
+[project.urls]
+Documentation = "https://github.com/gordonwatts/make-it-sync"
+Homepage = "https://github.com/gordonwatts/make-it-sync"
+Issues = "https://github.com/gordonwatts/make-it-sync/issues"
+"Release Notes" = "https://github.com/gordonwatts/make-it-sync/releases"
+"Releases" = "https://github.com/gordonwatts/make-it-sync/releases"
+"Source Code" = "https://github.com/gordonwatts/make-it-sync"
+
+[project.optional-dependencies]
+test = [
+    "pytest>=3.9",
+    "pytest-asyncio",
+    "pytest-mock",
+    "pytest-cov",
+    "coverage",
+    "flake8",
+    "codecov",
+    "autopep8",
+    "build",
+    "twine",
+    "wheel",
+]
+
+[tool.hatch.build.targets.sdist]
+# hatchling always includes:
+# pyproject.toml, .gitignore, any README, any LICENSE, AUTHORS
+include = [
+    "/make_it_sync/",
+    "/tests/"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["make_it_sync"]
