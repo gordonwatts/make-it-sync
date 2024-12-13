@@ -2,10 +2,11 @@ name: CI/CD
 
 on:
   push:
+    branches-ignore:
+      - "**"
   pull_request:
-  # Run daily at 0:01 UTC
-  schedule:
-    - cron: "1 0 * * *"
+    branches:
+      - "**"
 
 jobs:
   test:
