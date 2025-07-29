@@ -1,4 +1,4 @@
-from asyncio import new_event_loop, set_event_loop, get_running_loop, sleep
+from asyncio import new_event_loop, set_event_loop, sleep
 import inspect
 from typing import Tuple
 from abc import ABC, abstractmethod

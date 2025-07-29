@@ -61,7 +61,7 @@ def make_sync(fn: Callable[..., Awaitable[R]]) -> Callable[..., R]:
         func_name = fn.__name__
 
         @wraps(fn)
-        def wrapped_call(*args, **kwargs):
+        def wrapped_call(*args, **kwargs):  # type: ignore
             v = getattr(args[0], func_name, None)
             if v is None:
                 raise NotImplementedError(
@@ -69,7 +69,7 @@ def make_sync(fn: Callable[..., Awaitable[R]]) -> Callable[..., R]:
                 )
             return _sync_version_of_function(v, *(args[1:]), **kwargs)
 
-        del wrapped_call.__isabstractmethod__
+        del wrapped_call.__isabstractmethod__  # type: ignore
         return wrapped_call
     else:
 
