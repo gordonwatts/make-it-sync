@@ -7,12 +7,10 @@ name = "make-it-sync"
 version = "1.0.0"
 description = "Create a sync version of an async function"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 license = "MIT"
 keywords = []
-authors = [
-  { name = "Gordon Watts", email = "gwatts@uw.edu" },
-]
+authors = [{ name = "Gordon Watts", email = "gwatts@uw.edu" }]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
@@ -26,6 +24,7 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = []
@@ -40,26 +39,23 @@ Issues = "https://github.com/gordonwatts/make-it-sync/issues"
 
 [project.optional-dependencies]
 test = [
-    "pytest>=3.9",
-    "pytest-asyncio",
-    "pytest-mock",
-    "pytest-cov",
-    "coverage",
-    "flake8",
-    "codecov",
-    "autopep8",
-    "build",
-    "twine",
-    "wheel",
+  "pytest>=3.9",
+  "pytest-asyncio",
+  "pytest-mock",
+  "pytest-cov",
+  "coverage",
+  "flake8",
+  "codecov",
+  "autopep8",
+  "build",
+  "twine",
+  "wheel",
 ]
 
 [tool.hatch.build.targets.sdist]
 # hatchling always includes:
 # pyproject.toml, .gitignore, any README, any LICENSE, AUTHORS
-include = [
-    "/make_it_sync/",
-    "/tests/"
-]
+include = ["/make_it_sync/", "/tests/"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["make_it_sync"]
