@@ -7,7 +7,7 @@ name = "make-it-sync"
 version = "1.0.0"
 description = "Create a sync version of an async function"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = "MIT"
 keywords = []
 authors = [{ name = "Gordon Watts", email = "gwatts@uw.edu" }]
@@ -18,13 +18,12 @@ classifiers = [
   "Topic :: Software Development",
   "Topic :: Utilities",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.7",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = []
