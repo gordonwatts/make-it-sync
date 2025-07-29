@@ -10,7 +10,7 @@ def _sync_version_of_function(fn: Callable[..., Awaitable[R]], *args, **kwargs) 
     # Determine what environment we are currently in.
     loop_exists = False
     try:
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         loop_exists = True
         loop_is_running = loop.is_running()
     except RuntimeError:

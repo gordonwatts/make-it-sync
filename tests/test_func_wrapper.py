@@ -1,15 +1,25 @@
-from asyncio import get_event_loop, sleep
+from asyncio import new_event_loop, set_event_loop, get_running_loop, sleep
 import inspect
 from typing import Tuple
 from abc import ABC, abstractmethod
 
 import pytest
 
+
 from make_it_sync import make_sync
 
 
+@pytest.fixture
+def event_loop_fixture():
+    loop = new_event_loop()
+    set_event_loop(loop)
+    yield loop
+    loop.close()
+    set_event_loop(None)
+
+
 async def simple_func(a: int) -> int:
-    'Simple sleeper function to test calling mechanics'
+    "Simple sleeper function to test calling mechanics"
     await sleep(0.01)
     return a + 1
 
@@ -19,26 +29,24 @@ def test_wrap_normal():
     assert t_wrap(4) == 5
 
 
-def test_wrap_with_loop():
+def test_wrap_with_loop(event_loop_fixture):
     t_wrap = make_sync(simple_func)
-    _ = get_event_loop()
     assert t_wrap(4) == 5
 
 
-def test_wrap_with_running_loop():
+def test_wrap_with_running_loop(event_loop_fixture):
     t_wrap = make_sync(simple_func)
 
     async def doit():
         assert t_wrap(5) == 6
 
-    loop = get_event_loop()
-    loop.run_until_complete(doit())
+    event_loop_fixture.run_until_complete(doit())
 
 
 async def simple_raise(a: int) -> int:
-    'See if we can cause an exception correctly'
+    "See if we can cause an exception correctly"
     await sleep(0.01)
-    raise Exception('hi there')
+    raise Exception("hi there")
 
 
 def test_wrap_exception():
@@ -119,14 +127,13 @@ def test_wrap_kwargs_specified():
     assert wrap_it(bins=5, range=(5, 10)) == 10
 
 
-def test_wrap_kwargs_specified_loop():
+def test_wrap_kwargs_specified_loop(event_loop_fixture):
     t_wrap = make_sync(func_with_kwargs)
 
     async def doit():
         assert t_wrap(bins=5, range=(5, 10)) == 10
 
-    loop = get_event_loop()
-    loop.run_until_complete(doit())
+    event_loop_fixture.run_until_complete(doit())
 
 
 def test_abstract_method_created():
@@ -161,7 +168,8 @@ def test_abstract_method_invoked():
 
 
 def test_abstract_two_methods_invoked():
-    'Checking to make sure lambda capture is working as expected'
+    "Checking to make sure lambda capture is working as expected"
+
     class abc_base_2(ABC):
         @abstractmethod
         async def doit_async_1(self):
