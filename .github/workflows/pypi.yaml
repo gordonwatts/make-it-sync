@@ -1,0 +1,39 @@
+name: Publish Python 🐍 distributions 📦 to PyPI
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build toml
+
+      - name: Set version from tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "Setting version to $VERSION in pyproject.toml"
+          python -c "import toml; f='pyproject.toml'; d=toml.load(f); d['project']['version']='$VERSION'; toml.dump(d, open(f, 'w'))"
+
+      - name: Build package
+        run: |
+          python -m build
+
+      - name: Publish to PyPI via Trusted Publisher (OIDC)
+        uses: pypa/gh-action-pypi-publish@release/v1
